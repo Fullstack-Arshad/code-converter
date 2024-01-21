@@ -28,21 +28,11 @@ function formatFunctionName(txt) {
   return txt;
 }
 
-function formatXMLParentNodesList(txt) {
-  txt = txt.replace("rowToValidate\(XmlParentNodesList\(","rowToValidate[this.GetCategoryValue(");
-  txt = txt.replace("\)\(",",");
-  txt = txt.replace("\)\)",")]");
-  return txt;
-}
-
 function getLineByLineInput(input) {
   let lines = input.split('\n');
   for (let i = 0; i < lines.length; i++) {
     if(lines[i].includes('Public Function')) {
       lines[i] = formatFunctionName(lines[i]);
-    }
-    if(lines[i].includes("rowToValidate(XmlParentNodesList(")) {
-      lines[i] = formatXMLParentNodesList(lines[i]);
     }
     if (lines[i].includes('If') && lines[i].includes('=')) {
       lines[i] = globalReplaceSubString(lines[i],"=","==")
@@ -50,11 +40,6 @@ function getLineByLineInput(input) {
     if (lines[i].includes('If') && !lines[i].includes('(')) {
       lines[i] = globalReplace(lines[i],"If ","if (")
       lines[i] = globalReplace(lines[i],"Then",") {")
-    }
-    if(lines[i].includes("VerifyValidationMessage(validationMessage, isValid)")) {
-      let repeatTimes = lines[i].indexOf("V")
-      let tab = " ".repeat(repeatTimes)
-      lines[i] = tab + "isValid = this.VerifyValidationMessage(validationMessage, isValid)"
     }
 
   }
@@ -86,13 +71,11 @@ function ReplaceTokens(textInput){
   // textInput = globalReplace(textInput,".Rows",") {")
   textInput = globalReplace(textInput," As DataTable",": any")
   // textInput = globalReplace(textInput,"Public Function","public async")
-  textInput = globalReplace(textInput,"Accenture.CIO.SMT.Common.","")
   textInput = globalReplace(textInput,"Return","return")
   textInput = globalReplace(textInput,"Finally","}finally{")
   textInput = globalReplace(textInput,"True","true")
   textInput = globalReplace(textInput,"False","false")
   textInput = globalReplace(textInput," As Boolean",": boolean")
-  textInput = globalReplace(textInput,"UtilitiesService.PopulateLog","// UtilitiesService.PopulateLog")
   textInput = globalReplace(textInput,"Integer.Parse","Number")
   textInput = globalReplace(textInput,"Decimal.Parse","Number")
   textInput = globalReplace(textInput,"Not ","!")
@@ -102,13 +85,8 @@ function ReplaceTokens(textInput){
   textInput = globalReplace(textInput,"String.Empty","''")
   textInput = globalReplace(textInput,"Regex","RegExp")
   textInput = globalReplace(textInput,"New","new")
-  textInput = globalReplace(textInput,"PopulateErrorMessage","this.PopulateErrorMessage")
   textInput = globalReplace(textInput,"SetOutput","this.SetOutput")
   textInput = globalReplaceSubString(textInput,"<>","!==")
-  textInput = globalReplaceSubString(textInput," As ValidationMessageEntity = InitializeValidationMessage",": ValidationMessage = this.InitializeValidationMessage")
-  textInput = globalReplaceSubString(textInput," DBS_","CommonConstants.DBS_")
-  textInput = globalReplaceSubString(textInput,"VerifyValidationMessage(validationMessage, isValid)","isValid = this.VerifyValidationMessage(validationMessage, isValid)")
-  // textInput = globalReplace(textInput," As New List\[(*)\]",": any = []")
   return textInput;
 }
 
